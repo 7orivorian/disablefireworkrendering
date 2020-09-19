@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "me.nirvanannevermind.disablefireworkrendering.mixin.mixins",
+  "refmap": "mixins.disablefireworkrendering.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.7.10",
+  "verbose": true,
+  "mixins": [
+    "WorldMixin"
+  ]
+}

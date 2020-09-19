@@ -1,0 +1,123 @@
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'http://repo.spongepowered.org/maven'}
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'    }
+}
+
+
+apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+version = project.modVersion
+group = project.modGroup
+archivesBaseName = project.modBaseName
+
+sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+minecraft {
+    version = project.forgeVersion
+    runDir = "run"
+    mappings = project.mcpVersion
+    coreMod = "me.nirvanannevermind.disablefireworkrendering.mixin.Loader"
+}
+repositories {
+
+    maven {
+        name = 'spongepowered-repo'
+        url = 'http://repo.spongepowered.org/maven/'
+    }
+    maven {
+        name = 'swt-repo'
+        url = "http://maven-eclipse.github.io/maven"
+    }
+    maven {
+        name = "jitpack.io"
+        url = "https://jitpack.io"
+    }
+    mavenCentral()
+    jcenter()
+}
+
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+dependencies {
+
+    compile group: 'net.jodah', name: 'typetools', version: '0.5.0'
+
+    compile("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
+        exclude module: "launchwrapper"
+        exclude module: "guava"
+        exclude module: "gson"
+        exclude module: "commons-io"
+    }
+
+    compile(group: 'org.reflections', name: 'reflections', version: '0.9.11') {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
+        expand "version": project.version, "mcversion": project.minecraft.version
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
+}
+
+mixin {
+    defaultObfuscationEnv searge
+    add sourceSets.main, 'mixins.disablefireworkrendering.refmap.json'
+}
+
+reobf {
+    shadowJar {
+        classpath = sourceSets.main.compileClasspath
+    }
+}
+
+shadowJar {
+    dependencies {
+        include(dependency("org.spongepowered:mixin"))
+        include(dependency("net.jodah:typetools"))
+        include(dependency("org.reflections:reflections"))
+        include(dependency("org.javassist:javassist"))
+        include(dependency("org.json:json"))
+    }
+    exclude 'dummyThing'
+    exclude 'LICENSE.txt'
+    classifier = 'full'
+}
+
+build.dependsOn(shadowJar)
+
+jar {
+    exclude 'log4j2.xml'
+    manifest {
+        attributes(
+                'MixinConfigs': 'mixins.disablefireworkrendering.json',
+                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+                'TweakOrder': 0,
+                'FMLCorePluginContainsFMLMod': 'true',
+                'FMLCorePlugin': 'me.nirvananevermind.disablefireworkrendering.mixin.Loader',
+                'ForceLoadAsMod': 'true',
+        )
+    }
+}
+sourceCompatibility = targetCompatibility = "1.8"

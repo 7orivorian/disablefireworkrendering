@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "disablefireworkrendering",
+    "name": "Disable Firework Rendering",
+    "description": "This disables fireworks from being ticked and added to the queue, to stop chunkbans, minecraft gay so i couldn't just limit the amount, to renable fireworks, do /togglefireworks",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": ["Nirvana"],
+    "credits": "Nirvana for making it, DachaBager and Plivid for helping test, xyk_ and VFM for giving ideas",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
